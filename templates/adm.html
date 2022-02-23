@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+        <img src="https://d1gv3eajsppg20.cloudfront.net/favicon.ico" class="rounded me-2" alt="...">
+        <strong class="me-auto">Message...</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+        {{ msg }}
+    </div>
+</div>
+
+<form action="{{ url_for('adm') }}" method=post>
+    <div class="container">
+        <h3>{% block title %} Add volunteers {% endblock %}</h3>
+
+        <div class="form-check">
+            {% for volunteer in volunteers %}
+
+            <input class="form-check-input" type="checkbox" value="{{ volunteer['name'] }}" id="{{ volunteer['name'] }}" name="checkbox">
+            <label class="form-check-label" for="flexCheckDefault">
+                {{ volunteer['name'] }} 
+            </label>
+            <br>
+            {% endfor %}
+        </div>
+
+        <hr>Name<br>
+        <script type="text/javascript">
+            function getMM() {
+                var MM_text = document.getElementById("walletAddress").textContent;
+                var MM_temp = MM_text.split("=");
+                var MM = MM_temp[1];
+                console.log(MM);
+                document.getElementById("wallet_Address").value = MM;
+            }
+        </script>
+
+        <input type="hidden" name="wallet_Address" value="1" id="wallet_Address">
+        <input type="text" name="name" />
+        <input type="submit" name="submit" value="Insert" class="btn btn-primary" onclick="getMM()" />
+        <input type="submit" name="submit" value="Delete" class="btn btn-danger" />
+        <script>
+            var usedLaterScript = document.createElement('script');
+            usedLaterScript.src = '/static/bundle.js';
+            document.body.appendChild(usedLaterScript);
+        </script>
+    </div>
+
+</form>
+
+<script>
+    $(document).ready(function () {
+        $('.toast').toast('show');
+    });
+</script>
+{% endblock %}

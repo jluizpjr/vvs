@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+        <img src="https://d1gv3eajsppg20.cloudfront.net/favicon.ico" class="rounded me-2" alt="...">
+        <strong class="me-auto">Message...</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+        {{ msg }}
+    </div>
+</div>
+
+
+
+<table id="data" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Wallet</th>
+            <th>Date</th>
+            <th>Vote</th>
+            <th>Signature</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for voter in voters %}
+        <tr>
+            <td>{{ voter['wallet'] }}</td>
+            <td>{{ voter['date'] }}</td>
+            <td>{{ voter['volunteer_id'] }}</td>
+            <td>{{ voter['signature'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+<script>
+    $(document).ready(function () {
+        var msg = '{{msg}}'; 
+        if(!msg) {
+            return;
+        }
+        $('.toast').toast('show');
+    });
+</script>
+{% endblock %}

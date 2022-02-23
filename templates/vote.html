@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+        <img src="https://d1gv3eajsppg20.cloudfront.net/favicon.ico" class="rounded me-2" alt="...">
+        <strong class="me-auto">Message...</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+        {{ msg }}
+    </div>
+</div>
+
+
+
+<form action="{{ url_for('vote') }}" method=post id="form">
+    <div class="container">
+        <h3>{% block title %} Votes {% endblock %}</h3>
+        <p></p>
+
+        <button id="enableMetaMaskButton" type="button" class="btn btn-primary">Enable
+            MetaMask</button>
+        <div class="walletAddress" id="walletAddress">Wallet not connected</div>
+        <hr>
+
+        <table id="data" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Name</th>
+                    <th>Votes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <div class="form-check">
+                    {% for volunteer in volunteers %}
+                    <tr>
+                        <td><input class="form-check-input" type="checkbox" value="{{ volunteer['name'] }}"
+                                id="{{ volunteer['id'] }}" name="checkbox"></td>
+                        <td>{{ volunteer['name'] }}</td>
+                        <td>{{ volunteer['votes'] }}</td>
+                    </tr>
+
+                    <br>
+                    {% endfor %}
+                </div>
+
+            </tbody>
+        </table>
+
+        <input type="hidden" name="signature" value="0x0" id="signature">
+        <input type="hidden" name="wallet_Address" value="0x0" id="wallet_Address">
+        <input name="button" value="Vote" class="btn btn-primary" disabled id="voteButton" /><br>
+    </div>
+
+</form>
+
+
+<script>
+    $(document).ready(function () {
+        var msg = '{{msg}}'; 
+        if(!msg) {
+            return;
+        }
+        $('.toast').toast('show');
+    });
+</script>
+{% endblock %}
