@@ -76461,21 +76461,19 @@ async function vote(){
     //alert(account);
     wallet_Address.value = account;
     var checked = document.getElementsByClassName("form-check-input");
-    console.log("Volunteers id:" + checked);
+    
     var arr = [];
-
     for (let i = 0; i < checked.length; i++) {
-        arr.push(checked[i].value+' ');
+      if (checked[i].checked) {
+        arr.push(checked[i].value);
+      }
     }
 
+    console.log("Volunteers id:" + arr);
 
     // Sign content
-
-    //await web3.eth.personal.sign('I\'m voting for: '+arr, account);
-    signature.value = await web3.eth.personal.sign('I\'m voting for Community Volunteer of the month.', account);
+    signature.value = await web3.eth.personal.sign("Votes: "+arr, account);
     document.getElementById('form').submit();
-
-    
 
   }
 
