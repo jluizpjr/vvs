@@ -65,10 +65,11 @@ def vote():
                     if idw is None:
                         for id in ids:
                             print("Voting for:" + id)
-                            cur.execute("INSERT INTO voters (wallet, date, volunteer_id, signature) VALUES (?,?,?,?)", (
-                                walletAddress, datetime.now(), id, signature))
-                            cur.execute("UPDATE volunteers SET votes=votes+1 WHERE name=(?)", (id,))                                
-                            con.commit()
+                            cur.execute("UPDATE volunteers SET votes=votes+1 WHERE name=(?)", (id,))      
+                        list=",".join([str(item) for item in ids])                          
+                        cur.execute("INSERT INTO voters (wallet, date, volunteer_id, signature) VALUES (?,?,?,?)", (
+                                walletAddress, datetime.now(), list, signature))
+                        con.commit()
                         msg = "Votes successfully computed"
                     else:
                         msg = "User already voted"

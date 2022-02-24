@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+<main role="main" class="container">
 
 <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
@@ -18,14 +18,16 @@
 
 <form action="{{ url_for('vote') }}" method=post id="form">
     <div class="container">
-        <h3>{% block title %} Votes {% endblock %}</h3>
         <p></p>
-
+        <h4>Step 1: Enable your Metamask</h4>
+        <hr>
         <button id="enableMetaMaskButton" type="button" class="btn btn-primary">Enable
             MetaMask</button>
         <div class="walletAddress" id="walletAddress">Wallet not connected</div>
         <hr>
-
+        <br><br><br>
+        <h4>Step 2: Vote as your will</h4>
+        <hr>
         <table id="data" class="table table-striped">
             <thead>
                 <tr>
@@ -43,8 +45,6 @@
                         <td>{{ volunteer['name'] }}</td>
                         <td>{{ volunteer['votes'] }}</td>
                     </tr>
-
-                    <br>
                     {% endfor %}
                 </div>
 
@@ -55,8 +55,8 @@
         <input type="hidden" name="wallet_Address" value="0x0" id="wallet_Address">
         <input name="button" value="Vote" class="btn btn-primary" disabled id="voteButton" /><br>
     </div>
-
 </form>
+<hr><br>
 
 
 <script>
@@ -68,4 +68,6 @@
         $('.toast').toast('show');
     });
 </script>
+
+</main>
 {% endblock %}
