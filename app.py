@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request
 import sqlite3
 from datetime import datetime
+from eth_account.messages import encode_defunct
+from eth_account import Account
 
 app = Flask(__name__)
 
@@ -39,6 +41,16 @@ def createTable(conn):
     except Exception as e:
         print(e)
 
+def verify_signature(message, signature,address):
+    enc_message = encode_defunct(text=message)
+    msg_address = Account.recover_message(enc_message, signature=signature)
+    if msg_address == address:
+        print("Message Validated")
+        return True
+    else:
+        print("Message NOT Validated")
+        return False
+
 
 @app.route("/", methods=['POST', 'GET'])
 def vote():
@@ -57,6 +69,7 @@ def vote():
                 walletAddress = request.form['wallet_Address']
                 signature = request.form['signature']
                 print(ids, walletAddress, signature)
+                verify_signature(",".join([str(item) for item in ids]), signature, walletAddress)
                 with sqlite3.connect("TesteDB.db") as con:
                     cur = con.cursor()
                     idw = cur.execute(
