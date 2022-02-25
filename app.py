@@ -41,10 +41,12 @@ def createTable(conn):
     except Exception as e:
         print(e)
 
-def verify_signature(message, signature,address):
+
+def verify_signature(message, signature, address):
+    message = "Votes: "+message
     enc_message = encode_defunct(text=message)
     msg_address = Account.recover_message(enc_message, signature=signature)
-    if msg_address == address:
+    if msg_address.lower() == address.lower():
         print("Message Validated")
         return True
     else:
@@ -56,7 +58,8 @@ def verify_signature(message, signature,address):
 def vote():
     if request.method == 'GET':
         conn = getDatabase()
-        volunteers = conn.execute('SELECT * FROM volunteers ORDER BY name').fetchall()
+        volunteers = conn.execute(
+            'SELECT * FROM volunteers ORDER BY name').fetchall()
         conn.close()
         msg = "Please choose the best volunteers"
         return render_template('vote.html', volunteers=volunteers, msg=msg)
@@ -67,32 +70,33 @@ def vote():
             try:
                 ids = request.form.getlist('checkbox')
                 walletAddress = request.form['wallet_Address']
-                signature = request.form['signature']
-                print(ids, walletAddress, signature)
-                verify_signature(",".join([str(item) for item in ids]), signature, walletAddress)
+                signature = request.form['signature'] 
                 with sqlite3.connect("TesteDB.db") as con:
-                    cur = con.cursor()
-                    idw = cur.execute(
-                        "SELECT id from voters WHERE wallet=(?)", (walletAddress,)).fetchone()
-                    print(idw)
-                    if idw is None:
-                        for id in ids:
-                            print("Voting for:" + id)
-                            cur.execute("UPDATE volunteers SET votes=votes+1 WHERE name=(?)", (id,))      
-                        list=",".join([str(item) for item in ids])                          
-                        cur.execute("INSERT INTO voters (wallet, date, volunteer_id, signature) VALUES (?,?,?,?)", (
+                    if verify_signature(",".join([str(item) for item in ids]), signature, walletAddress) is True:
+                        cur = con.cursor()
+                        idw = cur.execute(
+                            "SELECT id from voters WHERE wallet=(?)", (walletAddress,)).fetchone()
+                        if idw is None:
+                            for id in ids:
+                                cur.execute(
+                                    "UPDATE volunteers SET votes=votes+1 WHERE name=(?)", (id,))
+                            list = ",".join([str(item) for item in ids])
+                            cur.execute("INSERT INTO voters (wallet, date, volunteer_id, signature) VALUES (?,?,?,?)", (
                                 walletAddress, datetime.now(), list, signature))
-                        con.commit()
-                        msg = "Votes successfully computed"
+                            con.commit()
+                            msg = "Votes successfully computed " + '\U00002705' 
+                        else:
+                            msg = "User already voted " + '\U0000274c' 
                     else:
-                        msg = "User already voted"
+                        msg = "Unable to validate signature" + '\U0000274c' 
             except sqlite3.Error as er:
                 print('SQLite error: %s' % (' '.join(er.args)))
                 con.rollback()
-                msg = "error in vote operation"
+                msg = "error in vote operation " + '\U0000274c' 
             finally:
                 con.row_factory = sqlite3.Row
-                volunteers = con.execute('SELECT * FROM volunteers ORDER BY name').fetchall()
+                volunteers = con.execute(
+                    'SELECT * FROM volunteers ORDER BY name').fetchall()
                 con.close()
                 print(msg)
                 return render_template('vote.html', volunteers=volunteers, msg=msg)
@@ -102,9 +106,10 @@ def vote():
 def adm():
     if request.method == 'GET':
         conn = getDatabase()
-        volunteers = conn.execute('SELECT * FROM volunteers ORDER BY name').fetchall()
+        volunteers = conn.execute(
+            'SELECT * FROM volunteers ORDER BY name').fetchall()
         conn.close()
-        msg="This should be accessed by admins only"
+        msg = "This should be accessed by admins only"
         return render_template('adm.html', volunteers=volunteers, msg=msg)
 
     if request.method == 'POST':
@@ -125,7 +130,8 @@ def adm():
                 msg = "Error in insert operation"
             finally:
                 con.row_factory = sqlite3.Row
-                volunteers = con.execute('SELECT * FROM volunteers ORDER BY name').fetchall()
+                volunteers = con.execute(
+                    'SELECT * FROM volunteers ORDER BY name').fetchall()
                 con.close()
                 return render_template("adm.html", volunteers=volunteers, msg=msg)
 
@@ -147,7 +153,8 @@ def adm():
                 msg = "Error in delete operation"
             finally:
                 con.row_factory = sqlite3.Row
-                volunteers = con.execute('SELECT * FROM volunteers ORDER BY name').fetchall()
+                volunteers = con.execute(
+                    'SELECT * FROM volunteers ORDER BY name').fetchall()
                 con.close()
                 print(volunteers)
                 return render_template("adm.html", volunteers=volunteers, msg=msg)
@@ -158,6 +165,6 @@ def listvote():
     if request.method == 'GET':
         conn = getDatabase()
         voters = conn.execute('SELECT * FROM voters').fetchall()
+        print(voters)
         conn.close()
-        msg="List"
         return render_template("list.html", voters=voters)
