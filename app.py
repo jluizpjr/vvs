@@ -53,7 +53,6 @@ def verify_signature(message, signature, address):
         print("Message NOT Validated")
         return False
 
-
 @app.route("/", methods=['POST', 'GET'])
 def vote():
     if request.method == 'GET':
@@ -98,7 +97,6 @@ def vote():
                 volunteers = con.execute(
                     'SELECT * FROM volunteers ORDER BY name').fetchall()
                 con.close()
-                print(msg)
                 return render_template('vote.html', volunteers=volunteers, msg=msg)
 
 
@@ -137,7 +135,6 @@ def adm():
 
         elif request.form['submit'] == "Delete":
             print("Callind delete")
-            print(request.form.getlist('checkbox'))
             try:
                 names = request.form.getlist('checkbox')
                 with sqlite3.connect("TesteDB.db") as con:
@@ -159,12 +156,10 @@ def adm():
                 print(volunteers)
                 return render_template("adm.html", volunteers=volunteers, msg=msg)
 
-
 @app.route("/list/", methods=['POST', 'GET'])
 def listvote():
     if request.method == 'GET':
         conn = getDatabase()
         voters = conn.execute('SELECT * FROM voters').fetchall()
-        print(voters)
         conn.close()
         return render_template("list.html", voters=voters)
